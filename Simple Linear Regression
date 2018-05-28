@@ -30,3 +30,24 @@ d=cbind(x,y)
 library(MHadaptive)
 mcmc_r=Metro_Hastings(li_func=linear_reg,pars=c(alpha,beta,sigma),
                        par_names=c('a','b','epsilon'),data=d,iterations = 1500,burn_in = 0)
+#HMC with Stan
+m_norm<-stan(file="LinearReg.stan",data = c("N","K","y","x"), iter = 10^3, chains = 3)
+
+#Plots to compare
+library(ggplot2)
+plota=qplot(1:1500, cumsum(mcmc_r$trace[,1])/(1:1500), col=I("hotpink"),ylab="",
+            main="Convergência de Beta0")
+plotb=qplot(1:1500, cumsum(mcmc_r$trace[,2])/(1:1500), col=I("deeppink3"),ylab="",
+            main="Convergência de Beta1")
+plotc=qplot(1:1500, cumsum(mcmc_r$trace[,3])/(1:1500), col=I("violetred"),ylab="",
+            main="Convergência de sigma")
+grid.arrange(plota, plotb, plotc, ncol=1, nrow = 3)
+
+plot11 = qplot(mcmc_r$trace[,1],geom="histogram",fill=I("lightcoral"),col=I("pink"),
+               main="Histograma de Beta0",xlab="",ylab="Frequência")
+plot12 = qplot(mcmc_r$trace[,2],geom="histogram",fill=I("maroon3"),col=I("pink"),
+               main="Histograma de Beta1",xlab="",ylab="Frequência")
+plot13 = qplot(mcmc_r$trace[,3],geom="histogram",fill=I("maroon4"),col=I("pink"),
+               main="Histograma de sigma",xlab="",ylab="Frequência")
+
+grid.arrange(plota, plot11, plotb,plot12, plotc, plot13, ncol=2, nrow = 3)
