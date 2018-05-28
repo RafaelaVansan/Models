@@ -10,7 +10,7 @@ linear_reg<-function(pars,data) {
   prior= prior_reg(pars)
   return(log_likelihood + prior)
 }
-## Define the Prior distributions
+# Define the Prior distributions
 prior_reg=function(pars) {
   a=pars[1] #intercept
   b=pars[2] #slope
